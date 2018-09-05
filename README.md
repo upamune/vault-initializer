@@ -4,8 +4,6 @@
 
 This is a port of [vault-init](https://github.com/kelseyhightower/vault-init) to AWS/GCP.
 
-**Currently it ONLY supports AWS S3/KMS**
-
 ## Usage
 
 The `vault-initializer` service is designed to be run alongside a Vault server and communicate over local host.
