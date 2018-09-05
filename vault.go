@@ -5,8 +5,8 @@ import (
 	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
+	"github.com/pkg/errors"
 	"net/http"
 )
 
@@ -120,11 +120,11 @@ func (v *Vault) Initialize() error {
 		return err
 	}
 
-	if err := v.KeyStorage.Put(v.rootTokenObjectName, bytes.NewReader(erootToken)); err != nil {
+	if err := v.KeyStorage.Put(v.rootTokenObjectName, erootToken); err != nil {
 		return err
 	}
 
-	if err := v.KeyStorage.Put(v.unsealObjectName, bytes.NewReader(eunsealKeys)); err != nil {
+	if err := v.KeyStorage.Put(v.unsealObjectName, eunsealKeys); err != nil {
 		return err
 	}
 

@@ -4,6 +4,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	awskms "github.com/aws/aws-sdk-go/service/kms"
+	"github.com/pkg/errors"
 )
 
 type KMS interface {
@@ -31,7 +32,7 @@ func (kms *AWSKMS) Encrypt(data []byte) ([]byte, error) {
 		Plaintext: data,
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to encrypt by AWSKMS")
 	}
 
 	return res.CiphertextBlob, nil
@@ -44,7 +45,7 @@ func (kms *AWSKMS) Decrypt(encryptedData []byte) ([]byte, error) {
 		CiphertextBlob: encryptedData,
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to decrypt by AWSKMS")
 	}
 
 	return res.Plaintext, nil

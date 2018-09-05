@@ -2,8 +2,9 @@ package main
 
 import (
 	"bytes"
-	"io"
 	"io/ioutil"
+
+	"github.com/pkg/errors"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -12,18 +13,18 @@ import (
 
 type Storage interface {
 	Get(key string) ([]byte, error)
-	Put(key string, body io.Reader) error
+	Put(key string, body []byte) error
 }
 
 type S3 struct {
 	BucketName string
-	session *session.Session
+	session    *session.Session
 }
 
 func NewS3(sess *session.Session, bucketName string) *S3 {
 	return &S3{
 		BucketName: bucketName,
-		session: sess,
+		session:    sess,
 	}
 }
 
@@ -35,7 +36,7 @@ func (s *S3) Get(key string) ([]byte, error) {
 		Key:    aws.String(key),
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "failed to get an object from S3: key=%s", key)
 	}
 	defer obj.Body.Close()
 
@@ -50,7 +51,7 @@ func (s *S3) Put(key string, body []byte) error {
 		Bucket: aws.String(s.BucketName),
 		Key:    aws.String(key),
 	})
-	return err
+	return errors.Wrapf(err, "failed to put an object to S3: key=%s", key)
 }
 
 // TODO
