@@ -1,0 +1,20 @@
+# vault-initializer
+
+This is a port of [vault-init](https://github.com/kelseyhightower/vault-init) to AWS/GCP.
+
+**Currently it ONLY supports AWS S3/KMS**
+
+## Usage
+
+The `vault-initializer` service is designed to be run alongside a Vault server and communicate over local host.
+
+
+## Configuration
+
+The vault-initializer service supports the following environment variables for configuration:
+
+* `CHECK_INTERVAL` - The time in seconds between Vault health checks. (300s)
+* `VAULT_ADDR` - Address of Vault service. (https://127.0.0.1:8200)
+* `KMS_KEY_ID` - The Google Cloud KMS or AWS KMS key ID used to encrypt and decrypt the vault master key and root token.
+* `S3_BUCKET_NAME`  - The AWS Storage Bucket where the vault master key and root token is stored.
+* `GCS_BUCKET_NAME` - The Google Cloud Storage Bucket where the vault master key and root token is stored.
