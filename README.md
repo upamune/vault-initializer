@@ -1,4 +1,5 @@
-# vault-initializer
+# vault-initializer [![Docker Repository on Quay](https://quay.io/repository/upamune/vault-initializer/status "Docker Repository on Quay")](https://quay.io/repository/upamune/vault-initializer)
+
 ![logo](https://i.gyazo.com/90a9c2c4da924ae3f644fd1431bd7317.png)
 
 This is a port of [vault-init](https://github.com/kelseyhightower/vault-init) to AWS/GCP.
