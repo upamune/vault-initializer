@@ -6,12 +6,10 @@ import (
 	"io/ioutil"
 
 	"cloud.google.com/go/storage"
-
-	"github.com/pkg/errors"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/pkg/errors"
 )
 
 type Storage interface {

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"time"
 
+	gstorage "cloud.google.com/go/storage"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog/log"
@@ -34,7 +36,20 @@ func main() {
 		storage = NewS3(sess, config.S3BucketName)
 		kms = NewAWSKMS(sess, config.KMSKeyID)
 	} else if config.GCSBucketName != "" {
-		// TODO
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+
+		sclient, err := gstorage.NewClient(ctx)
+		if err != nil {
+			log.Fatal().Err(err).Msg("failed to create GCS client")
+		}
+		storage = NewGCS(sclient, config.GCSBucketName)
+
+		if s, err := NewGCPKMS(ctx, config.KMSKeyID); err != nil {
+			log.Fatal().Err(err).Msg("failed to create GCPKMS client")
+		} else {
+			kms = s
+		}
 	} else {
 		log.Fatal().Msg("both S3BucketName and GCSBucketName are empty")
 	}
