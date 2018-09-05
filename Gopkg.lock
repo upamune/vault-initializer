@@ -28,11 +28,14 @@
     "private/protocol",
     "private/protocol/eventstream",
     "private/protocol/eventstream/eventstreamapi",
+    "private/protocol/json/jsonutil",
+    "private/protocol/jsonrpc",
     "private/protocol/query",
     "private/protocol/query/queryutil",
     "private/protocol/rest",
     "private/protocol/restxml",
     "private/protocol/xml/xmlutil",
+    "service/kms",
     "service/s3",
     "service/sts"
   ]
@@ -53,6 +56,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2c32cc85adfd255b29fbd33269b873f1dc04a8c560d2a253e1c37254ccfb14a5"
+  inputs-digest = "a67141c7f20adca66f7f4d106e1b3e086f1d967d07e8b8b464a2f172b52708dc"
   solver-name = "gps-cdcl"
   solver-version = 1

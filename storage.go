@@ -17,27 +17,18 @@ type Storage interface {
 
 type S3 struct {
 	BucketName string
+	session *session.Session
 }
 
-func NewS3(bucketName string) *S3 {
+func NewS3(sess *session.Session, bucketName string) *S3 {
 	return &S3{
 		BucketName: bucketName,
+		session: sess,
 	}
-}
-
-func (s *S3) getService() (*s3.S3, error) {
-	sess, err := session.NewSession()
-	if err != nil {
-		return nil, err
-	}
-	return s3.New(sess), nil
 }
 
 func (s *S3) Get(key string) ([]byte, error) {
-	svc, err := s.getService()
-	if err != nil {
-		return nil, err
-	}
+	svc := s3.New(s.session)
 
 	obj, err := svc.GetObject(&s3.GetObjectInput{
 		Bucket: aws.String(s.BucketName),
@@ -52,12 +43,9 @@ func (s *S3) Get(key string) ([]byte, error) {
 }
 
 func (s *S3) Put(key string, body []byte) error {
-	svc, err := s.getService()
-	if err != nil {
-		return err
-	}
+	svc := s3.New(s.session)
 
-	_, err = svc.PutObject(&s3.PutObjectInput{
+	_, err := svc.PutObject(&s3.PutObjectInput{
 		Body:   bytes.NewReader(body),
 		Bucket: aws.String(s.BucketName),
 		Key:    aws.String(key),
