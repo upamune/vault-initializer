@@ -1,4 +1,4 @@
-# vault-initializer [![CircleCI](https://circleci.com/gh/upamune/vault-initializer/tree/master.svg?style=svg)](https://circleci.com/gh/upamune/vault-initializer/tree/master) [![Docker Repository on Quay](https://quay.io/repository/upamune/vault-initializer/status "Docker Repository on Quay")](https://quay.io/repository/upamune/vault-initializer)
+# vault-initializer [![CircleCI](https://circleci.com/gh/upamune/vault-initializer/tree/master.svg?style=svg)](https://circleci.com/gh/upamune/vault-initializer/tree/master) [![Docker Repository on Quay](https://quay.io/repository/upamune/vault-initializer/status "Docker Repository on Quay")](https://quay.io/repository/upamune/vault-initializer) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ![logo](https://i.gyazo.com/90a9c2c4da924ae3f644fd1431bd7317.png)
 
