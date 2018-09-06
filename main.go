@@ -8,6 +8,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
+
 	gstorage "cloud.google.com/go/storage"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/kelseyhightower/envconfig"
@@ -38,7 +40,8 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	if config.S3BucketName != "" {
-		sess := session.New()
+		sess := session.New(&aws.Config{Region: aws.String(config.Region)})
+
 		storage = NewS3(sess, config.S3BucketName)
 		kms = NewAWSKMS(sess, config.KMSKeyID)
 	} else if config.GCSBucketName != "" {

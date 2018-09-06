@@ -16,5 +16,6 @@ The vault-initializer service supports the following environment variables for c
 * `CHECK_INTERVAL` - The time in seconds between Vault health checks. (300s)
 * `VAULT_ADDR` - Address of Vault service. (https://127.0.0.1:8200)
 * `KMS_KEY_ID` - The Google Cloud KMS or AWS KMS key ID used to encrypt and decrypt the vault master key and root token.
+* `REGION` - Region of AWS KMS/S3 or GCP KMS/GCS.
 * `S3_BUCKET_NAME`  - The AWS Storage Bucket where the vault master key and root token is stored.
 * `GCS_BUCKET_NAME` - The Google Cloud Storage Bucket where the vault master key and root token is stored.
