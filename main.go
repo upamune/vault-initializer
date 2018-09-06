@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	gstorage "cloud.google.com/go/storage"
@@ -31,14 +34,14 @@ func main() {
 		storage Storage
 		kms     KMS
 	)
+
+	ctx, cancel := context.WithCancel(context.Background())
+
 	if config.S3BucketName != "" {
 		sess := session.New()
 		storage = NewS3(sess, config.S3BucketName)
 		kms = NewAWSKMS(sess, config.KMSKeyID)
 	} else if config.GCSBucketName != "" {
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
-
 		sclient, err := gstorage.NewClient(ctx)
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to create GCS client")
@@ -56,57 +59,75 @@ func main() {
 
 	vault := NewVault(config.VaultAddr, storage, kms)
 
+	signalCh := make(chan os.Signal)
+	signal.Notify(signalCh,
+		syscall.SIGINT,
+		syscall.SIGTERM,
+		syscall.SIGKILL,
+	)
+
+	stop := func() {
+		log.Info().Msg("Shutting down")
+		cancel()
+		os.Exit(0)
+	}
+
 	for {
-		status, err := vault.HealthCheck()
-		if err != nil {
-			log.Error().
-				Str("vault_addr", config.VaultAddr).
-				Msg("failed to call health check endpoint of Vault")
-			time.Sleep(config.CheckInterval)
-			continue
-		}
-
-		switch status {
-		case http.StatusOK:
-			log.Info().Str("vault_addr", config.VaultAddr).Msg("Vault is initialized and unsealed")
-		case http.StatusTooManyRequests:
-			log.Info().Str("vault_addr", config.VaultAddr).Msg("Vault is unsealed and in standby mode")
-		case http.StatusNotImplemented:
-			log.Info().Str("vault_addr", config.VaultAddr).Msg("Vault is not initialized. Initializing and unsealing...")
-			if err := vault.Initialize(); err != nil {
-				log.Error().
-					Err(err).
-					Str("vault_addr", config.VaultAddr).
-					Msg("failed to initialize Vault")
-				time.Sleep(config.CheckInterval)
-				continue
-			}
-			if err := vault.Unseal(); err != nil {
-				log.Error().
-					Err(err).
-					Str("vault_addr", config.VaultAddr).
-					Msg("failed to unseal Vault")
-				time.Sleep(config.CheckInterval)
-				continue
-			}
-		case http.StatusServiceUnavailable:
-			log.Info().Str("vault_addr", config.VaultAddr).Msg("Vault is sealed. Unsealing...")
-			if err := vault.Unseal(); err != nil {
-				log.Error().
-					Err(err).
-					Str("vault_addr", config.VaultAddr).
-					Msg("failed to unseal Vault")
-				time.Sleep(config.CheckInterval)
-				continue
-			}
+		select {
+		case <-signalCh:
+			stop()
 		default:
-			log.Info().
-				Str("vault_addr", config.VaultAddr).
-				Int("status_code", status).
-				Msg("Vault is in an unknown state.")
-		}
+			status, err := vault.HealthCheck()
+			if err != nil {
+				log.Error().
+					Str("vault_addr", config.VaultAddr).
+					Msg("failed to call health check endpoint of Vault")
+				time.Sleep(config.CheckInterval)
+				continue
+			}
 
-		log.Info().Str("vault_addr", config.VaultAddr).Msgf("Next check in %s", config.CheckInterval)
-		time.Sleep(config.CheckInterval)
+			switch status {
+			case http.StatusOK:
+				log.Info().Str("vault_addr", config.VaultAddr).Msg("Vault is initialized and unsealed")
+			case http.StatusTooManyRequests:
+				log.Info().Str("vault_addr", config.VaultAddr).Msg("Vault is unsealed and in standby mode")
+			case http.StatusNotImplemented:
+				log.Info().Str("vault_addr", config.VaultAddr).Msg("Vault is not initialized. Initializing and unsealing...")
+				if err := vault.Initialize(); err != nil {
+					log.Error().
+						Err(err).
+						Str("vault_addr", config.VaultAddr).
+						Msg("failed to initialize Vault")
+					time.Sleep(config.CheckInterval)
+					continue
+				}
+				if err := vault.Unseal(); err != nil {
+					log.Error().
+						Err(err).
+						Str("vault_addr", config.VaultAddr).
+						Msg("failed to unseal Vault")
+					time.Sleep(config.CheckInterval)
+					continue
+				}
+			case http.StatusServiceUnavailable:
+				log.Info().Str("vault_addr", config.VaultAddr).Msg("Vault is sealed. Unsealing...")
+				if err := vault.Unseal(); err != nil {
+					log.Error().
+						Err(err).
+						Str("vault_addr", config.VaultAddr).
+						Msg("failed to unseal Vault")
+					time.Sleep(config.CheckInterval)
+					continue
+				}
+			default:
+				log.Info().
+					Str("vault_addr", config.VaultAddr).
+					Int("status_code", status).
+					Msg("Vault is in an unknown state.")
+			}
+
+			log.Info().Str("vault_addr", config.VaultAddr).Msgf("Next check in %s", config.CheckInterval)
+			time.Sleep(config.CheckInterval)
+		}
 	}
 }
