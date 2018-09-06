@@ -61,8 +61,8 @@ func (kms *GCPKMS) Decrypt(encryptedData []byte) ([]byte, error) {
 		return nil, errors.Wrap(err, "failed to decrypt by GCPKMS")
 	}
 
-	dst := []byte{}
-	if _, err := base64.StdEncoding.Decode(dst, []byte(res.Plaintext)); err != nil {
+	dst, err := base64.StdEncoding.DecodeString(res.Plaintext)
+	if err != nil {
 		return nil, errors.Wrapf(err, "failed to decode text: %s", res.Plaintext)
 	}
 

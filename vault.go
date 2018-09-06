@@ -110,14 +110,16 @@ func (v *Vault) Initialize() error {
 		return err
 	}
 
-	d := []byte{}
 	buf := bytes.NewBuffer([]byte{})
 	if err := json.NewEncoder(buf).Encode(initResponse); err != nil {
 		return err
 	}
 
-	base64.StdEncoding.Encode(d, buf.Bytes())
-	eunsealKeys, err := v.KMS.Encrypt(d)
+	b := buf.Bytes()
+	d := make([]byte, base64.StdEncoding.EncodedLen(len(b)))
+
+	base64.StdEncoding.Encode(d, b)
+	eunsealKeys, err := v.KMS.Encrypt([]byte(d))
 	if err != nil {
 		return err
 	}
@@ -145,7 +147,7 @@ func (v *Vault) Unseal() error {
 	}
 
 	initResponse := &InitResponse{}
-	data := []byte{}
+	data := make([]byte, base64.StdEncoding.DecodedLen(len(b64data)))
 	if _, err := base64.StdEncoding.Decode(data, b64data); err != nil {
 		return err
 	}
