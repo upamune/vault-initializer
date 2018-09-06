@@ -61,11 +61,13 @@ func NewVault(addr string, storage Storage, kms KMS) *Vault {
 
 func (v *Vault) HealthCheck() (int, error) {
 	endpoint := fmt.Sprintf("%s/v1/sys/health", v.Addr)
-	res, err := v.httpClient.Get(endpoint)
+	res, err := v.httpClient.Head(endpoint)
 	if err != nil {
 		return 0, err
 	}
-	defer res.Body.Close()
+	if res != nil && res.Body != nil {
+		res.Body.Close()
+	}
 
 	return res.StatusCode, nil
 }
@@ -94,7 +96,7 @@ func (v *Vault) Initialize() error {
 	}
 	defer res.Body.Close()
 
-	if res.StatusCode != 200 {
+	if res.StatusCode != http.StatusOK {
 		return errors.New("failed to initialize request to vault")
 	}
 
