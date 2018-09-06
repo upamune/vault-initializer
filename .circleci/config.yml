@@ -17,7 +17,7 @@ jobs:
           if [ ! -d 'vendor' ]; then
             dep ensure -vendor-only
           fi
-    - run:
+    - save_cache:
         key: vault-initializer-{{ checksum "Gopkg.lock" }}
         paths:
           - /go/src/github.com/upamune/vault-initializer/vendor
