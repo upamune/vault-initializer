@@ -63,6 +63,12 @@
   version = "v1.15.27"
 
 [[projects]]
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  revision = "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
+  version = "v1.1.1"
+
+[[projects]]
   name = "github.com/go-ini/ini"
   packages = ["."]
   revision = "5cf292cae48347c2490ac1a58fe36735fb78df7e"
@@ -105,6 +111,12 @@
   version = "v0.8.0"
 
 [[projects]]
+  name = "github.com/pmezard/go-difflib"
+  packages = ["difflib"]
+  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
+  version = "v1.0.0"
+
+[[projects]]
   name = "github.com/rs/zerolog"
   packages = [
     ".",
@@ -114,6 +126,15 @@
   ]
   revision = "77db4b4f350e31be66a57c332acb7721cf9ff9bb"
   version = "v1.8.0"
+
+[[projects]]
+  name = "github.com/stretchr/testify"
+  packages = [
+    "assert",
+    "require"
+  ]
+  revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
+  version = "v1.2.2"
 
 [[projects]]
   name = "go.opencensus.io"
@@ -269,6 +290,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4d4b38e449ef2adedd91e89cb4a43f0175bc08f8ffaa0f67a6f628783c554d74"
+  inputs-digest = "484fefc1117c7f68d6e087f10485ec97de8aa5ae34694d575ecc2efc2243231f"
   solver-name = "gps-cdcl"
   solver-version = 1
