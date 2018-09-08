@@ -24,6 +24,9 @@ jobs:
     - run:
         name: go build
         command: CGO_ENABLE=0 GOOS=linux go build -ldflags="-s -w" -o vault-initializer -v .
+    - run:
+        name: go test
+        command: go test -v ./...
 workflows:
   version: 2
   build:
