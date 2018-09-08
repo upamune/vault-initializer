@@ -155,8 +155,6 @@ func (s *VaultServer) initHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s.alreadyInitialised = true
-
-	w.WriteHeader(http.StatusOK)
 }
 
 func (s *VaultServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
