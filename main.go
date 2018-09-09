@@ -75,6 +75,10 @@ func main() {
 		os.Exit(0)
 	}
 
+	run(vault, config, signalCh, stop)
+}
+
+func run(vault *Vault, config *Config, signalCh chan os.Signal, stop func()) {
 	for {
 		select {
 		case <-signalCh:
@@ -133,4 +137,5 @@ func main() {
 			time.Sleep(config.CheckInterval)
 		}
 	}
+
 }
