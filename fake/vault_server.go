@@ -47,7 +47,7 @@ type VaultServer struct {
 
 func NewVaultServer() *VaultServer {
 	return &VaultServer{
-		unsealedMap: map[string]struct{}{},
+		unsealedMap:        map[string]struct{}{},
 		alreadyInitialised: false,
 		alreadyUnsealed:    false,
 		r:                  rand.New(rand.NewSource(time.Now().UnixNano())),
@@ -70,7 +70,6 @@ func (s *VaultServer) unsealHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
 
 	req := &UnsealRequest{}
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
@@ -97,9 +96,9 @@ func (s *VaultServer) unsealHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res := &UnsealResponse{
-		Sealed:   !s.alreadyUnsealed,
+		Sealed: !s.alreadyUnsealed,
 	}
-	if err := json.NewEncoder(w).Encode(res); err != nil{
+	if err := json.NewEncoder(w).Encode(res); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

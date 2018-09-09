@@ -5,7 +5,7 @@ import "fmt"
 type Storage struct {
 	getHandler func(key string) ([]byte, error)
 	putHandler func(key string, body []byte) error
-	data map[string][]byte
+	data       map[string][]byte
 }
 
 func (s *Storage) Get(key string) ([]byte, error) {
@@ -26,4 +26,3 @@ func (s *Storage) Put(key string, body []byte) error {
 	s.data[key] = body
 	return nil
 }
-
