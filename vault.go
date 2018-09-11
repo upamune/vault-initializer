@@ -148,8 +148,8 @@ func (v *Vault) Unseal() error {
 	}
 
 	initResponse := &InitResponse{}
-	data := make([]byte, base64.StdEncoding.DecodedLen(len(b64data)))
-	if _, err := base64.StdEncoding.Decode(data, b64data); err != nil {
+	data, err := base64.StdEncoding.DecodeString(string(b64data))
+	if err != nil {
 		return err
 	}
 
